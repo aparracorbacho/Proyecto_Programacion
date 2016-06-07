@@ -24,6 +24,7 @@ public class MySqlC {
     static String url = "jdbc:mysql://51.254.137.26/"+bd;
     Connection conn = null;
     Statement stmt = null;
+    public boolean existe = false;
     
  /**
  * Con el metodo conn definimos la conexion a la base de datos
@@ -100,5 +101,18 @@ public class MySqlC {
          }
          if (pruebapass.equals(pass)) { autenticado = 1; } else { autenticado = 0; }     
          return autenticado;
+    }
+    
+    public boolean compruebaEnv(String usuario){
+        try {
+            ResultSet rs = null;
+            rs = consulta("Select * from usuarios where usuario = '"+usuario+"'");
+            int contador = 0;
+            while(rs.next()){  contador++;  }
+            if ( contador == 0 ) { existe = false;  } else  { existe = true; }
+            } catch (SQLException ex) {
+            Logger.getLogger(MySqlC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return existe;
     }
 }

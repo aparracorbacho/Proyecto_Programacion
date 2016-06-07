@@ -3,6 +3,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -34,24 +35,25 @@ public class PrincipalCorreo extends javax.swing.JFrame {
             modelo.addColumn("Enviado por");
             modelo.addColumn("Titulo");
            
-            int idcontador = 1;
-            String sqlcargar = "Select * from correos where recibidop = '"+usuario+"'";
+            String sqlcargar = "Select * from correos where recibidop = '"+usuario+"' ORDER BY id DESC";
             ResultSet rs = mysql.consulta(sqlcargar);
             while(rs.next()){
-                object[0] = idcontador;             
-                object[1] = rs.getString(4);
-                object[2] = rs.getString(5);
+                object[0] = rs.getInt(1);             
+                object[1] = rs.getString(2);
+                object[2] = rs.getString(4);
                 modelo.addRow(object);
-                idcontador++;
             }
         } catch (SQLException ex) {
             Logger.getLogger(PrincipalCorreo.class.getName()).log(Level.SEVERE, null, ex);
         }
                 
         TCorreos.setModel(modelo);
-        TCorreos.getColumnModel().getColumn(0).setMaxWidth(25);
+        TCorreos.getColumnModel().getColumn(0).setMaxWidth(0);
+        TCorreos.getColumnModel().getColumn(0).setMinWidth(0);
+        TCorreos.getColumnModel().getColumn(0).setPreferredWidth(0);
         TCorreos.getColumnModel().getColumn(1).setMaxWidth(150);
         TCorreos.getColumnModel().getColumn(1).setMinWidth(150);
+        
             for (int i = 0;i<TCorreos.getColumnCount();i++){
             TCorreos.getColumnModel().getColumn(i).setResizable(false);
             }
@@ -76,11 +78,13 @@ public class PrincipalCorreo extends javax.swing.JFrame {
 
         bienvenido = new javax.swing.JLabel();
         actualizar = new javax.swing.JButton();
-        escribir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         TCorreos = new javax.swing.JTable();
+        Salir = new javax.swing.JButton();
+        escirbircorreo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Principal - Correo");
 
         bienvenido.setText("Bienvenido al correo interno de la empresa");
 
@@ -90,8 +94,6 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                 actualizarActionPerformed(evt);
             }
         });
-
-        escribir.setText("Escribir correo");
 
         TCorreos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -104,7 +106,26 @@ public class PrincipalCorreo extends javax.swing.JFrame {
 
             }
         ));
+        TCorreos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TCorreosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(TCorreos);
+
+        Salir.setText("Salir");
+        Salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalirActionPerformed(evt);
+            }
+        });
+
+        escirbircorreo.setText("Escribir correo");
+        escirbircorreo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                escirbircorreoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -114,16 +135,19 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(escribir)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 694, Short.MAX_VALUE)
                         .addGap(28, 28, 28)
                         .addComponent(actualizar)
                         .addGap(49, 49, 49))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(bienvenido)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(167, 167, 167)
+                        .addComponent(escirbircorreo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Salir)
+                        .addGap(70, 70, 70))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,14 +156,20 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                 .addComponent(bienvenido)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(actualizar))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(90, 90, 90)
-                .addComponent(escribir)
-                .addContainerGap(49, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
+                                .addComponent(actualizar))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(46, 46, 46)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(90, 90, 90)
+                        .addComponent(escirbircorreo)
+                        .addContainerGap(49, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Salir)
+                        .addGap(27, 27, 27))))
         );
 
         pack();
@@ -151,6 +181,50 @@ public class PrincipalCorreo extends javax.swing.JFrame {
         modelo.setRowCount(0);
         cargar();
     }//GEN-LAST:event_actualizarActionPerformed
+
+    private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_SalirActionPerformed
+
+    private void TCorreosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TCorreosMouseClicked
+        // TODO add your handling code here:
+        
+         // Doble click en cada correo
+        String enviadopc = null, asuntoc =  null, textoc = null;
+          
+            try {
+                //Recogemos el valor ID de donde emos echo doble click
+                JTable target = (JTable)evt.getSource();
+                int row = target.getSelectedRow();
+                int valor = (int) TCorreos.getValueAt(row, 0);
+                System.out.println(valor);
+                //Cogemos todos los datos de ese correo
+                String sqlcargar = "Select * from correos where id = '"+valor+"'";
+                ResultSet rs = mysql.consulta(sqlcargar);
+                while(rs.next()){
+                        enviadopc = rs.getString(2);
+                        asuntoc = rs.getString(4);
+                        textoc = rs.getString(5);
+                       
+                }
+               VerCorreo vercorreo = new VerCorreo();
+               vercorreo.setValores(usuario,enviadopc,asuntoc,textoc);
+               vercorreo.setVisible(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(PrincipalCorreo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        //Introducimos los datos de ese correo en una nueva ventana para visualizarlos
+               
+    }//GEN-LAST:event_TCorreosMouseClicked
+
+    private void escirbircorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escirbircorreoActionPerformed
+        // TODO add your handling code here:
+        EscribirCorreo escribirn = new EscribirCorreo();
+        escribirn.setUsuario(usuario);
+        escribirn.setVisible(true);
+    }//GEN-LAST:event_escirbircorreoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -188,10 +262,11 @@ public class PrincipalCorreo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Salir;
     private javax.swing.JTable TCorreos;
     private javax.swing.JButton actualizar;
     private javax.swing.JLabel bienvenido;
-    private javax.swing.JButton escribir;
+    private javax.swing.JButton escirbircorreo;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
