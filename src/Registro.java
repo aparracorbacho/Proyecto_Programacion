@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author DogRage
+ * @author aparracorbacho
  */
 public class Registro extends javax.swing.JFrame {
     public boolean existe = false;

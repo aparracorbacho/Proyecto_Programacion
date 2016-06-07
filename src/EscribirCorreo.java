@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author DogRage
+ * @author aparracorbacho
  */
 public class EscribirCorreo extends javax.swing.JFrame {
     String usuario = null, recibidop = null, asunto = null, texto = null;

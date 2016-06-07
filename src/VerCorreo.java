@@ -6,7 +6,7 @@
 
 /**
  *
- * @author DogRage
+ * @author aparracorbacho
  */
 public class VerCorreo extends javax.swing.JFrame {
     String enviadop, asunto, texto;
