@@ -31,7 +31,7 @@ public class EscribirCorreo extends javax.swing.JFrame {
         this.recibidop = enviadop;
         para.setText(enviadop);
         asuntoField.setText("Re: " +asunto);
-        textoField.setText("\n=========================\n      Correo Anterior\n=========================\n" + texto);
+        textoField.setText("\n=========================\n      Correo Anterior         \n=========================\n" + texto);
     }
      public void setUsuario(String usuario){
          this.usuario = usuario;

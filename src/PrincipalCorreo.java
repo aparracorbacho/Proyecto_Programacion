@@ -209,6 +209,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
         
          // Doble click en cada correo
         String enviadopc = null, asuntoc =  null, textoc = null;
+        int id =0;
           
             try {
                 //Recogemos el valor ID de donde emos echo doble click
@@ -220,13 +221,14 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                 String sqlcargar = "Select * from correos where id = '"+valor+"'";
                 ResultSet rs = mysql.consulta(sqlcargar);
                 while(rs.next()){
+                        id = rs.getInt(1);
                         enviadopc = rs.getString(2);
                         asuntoc = rs.getString(4);
                         textoc = rs.getString(5);
                        
                 }
                VerCorreo vercorreo = new VerCorreo();
-               vercorreo.setValores(usuario,enviadopc,asuntoc,textoc);
+               vercorreo.setValores(usuario,enviadopc,asuntoc,textoc,id);
                vercorreo.setVisible(true);
             } catch (SQLException ex) {
                 Logger.getLogger(PrincipalCorreo.class.getName()).log(Level.SEVERE, null, ex);
@@ -248,7 +250,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
         FileWriter fichero = null;
         PrintWriter pw = null;
         try {
-        String correoexportado = "src/correointernointerfaz/exportado/Correos.txt";
+        String correoexportado = "src/exportado/Correos.txt";
         fichero = new FileWriter(correoexportado);
         String fileLocal = new String(correoexportado);
         ResultSet rs = null;

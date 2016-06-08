@@ -1,0 +1,33 @@
+#Titulo: Primer correo para Aaron
+#Enviado por: Alba
+#Contenido:
+Primer correo para Aaron
+#######################################################
+
+#Titulo: Re: Primer correo para Aaron de Aaron
+#Enviado por: Aaron
+#Contenido:
+
+----------------------
+         Correo Anterior
+Primer correo para Aaron
+#######################################################
+
+#Titulo: Re: Re: Primer correo para Aaron de Aaron
+#Enviado por: Aaron
+#Contenido:
+Esto es otra prueba
+----------------------
+    Correo Anterior
+
+----------------------
+         Correo Anterior
+Primer correo para Aaron
+#######################################################
+
+#Titulo: Enviado desde escirbir correo
+#Enviado por: Aaron
+#Contenido:
+Enviado desde escirbir correo no desde responder
+#######################################################
+

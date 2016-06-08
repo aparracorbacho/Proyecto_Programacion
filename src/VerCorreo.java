@@ -1,3 +1,9 @@
+
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,6 +17,8 @@
 public class VerCorreo extends javax.swing.JFrame {
     String enviadop, asunto, texto;
     String usuario;
+    int id;
+    MySqlC mysql = new MySqlC();
     
     /**
      * Creates new form VerCorreo
@@ -19,9 +27,11 @@ public class VerCorreo extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setDefaultCloseOperation(VerCorreo.DISPOSE_ON_CLOSE);
+        mysql.conn();
     }
     
-     public void setValores(String usuario, String enviadop, String asunto, String texto){
+     public void setValores(String usuario, String enviadop, String asunto, String texto, int id){
+        this.id = id;
         this.enviadop= enviadop;
         this.asunto = asunto;
         this.texto = texto;
@@ -50,6 +60,8 @@ public class VerCorreo extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         contenidoField = new javax.swing.JTextArea();
         Responder = new javax.swing.JButton();
+        exportar = new javax.swing.JButton();
+        borrarcorreo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ver Correo - Correo");
@@ -82,6 +94,20 @@ public class VerCorreo extends javax.swing.JFrame {
             }
         });
 
+        exportar.setText("Exportar Correo");
+        exportar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportarActionPerformed(evt);
+            }
+        });
+
+        borrarcorreo.setText("Borrar");
+        borrarcorreo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                borrarcorreoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -101,11 +127,17 @@ public class VerCorreo extends javax.swing.JFrame {
                             .addComponent(asuntoLabel)
                             .addComponent(jScrollPane1)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(83, 83, 83)
-                        .addComponent(Responder)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 367, Short.MAX_VALUE)
+                        .addGap(208, 208, 208)
+                        .addComponent(exportar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
                         .addComponent(salirdecorreo)))
-                .addGap(121, 121, 121))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Responder)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addComponent(borrarcorreo)))
+                .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,16 +150,24 @@ public class VerCorreo extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(asuntoLabel))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE))
+                        .addGap(18, 18, 18))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(Responder)
+                        .addGap(29, 29, 29)
+                        .addComponent(borrarcorreo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(salirdecorreo)
-                    .addComponent(Responder))
+                    .addComponent(exportar))
                 .addGap(82, 82, 82))
         );
 
@@ -146,6 +186,50 @@ public class VerCorreo extends javax.swing.JFrame {
         escribir.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_ResponderActionPerformed
+
+    private void exportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportarActionPerformed
+        // Codigo para exportar correo
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try
+        {   
+            String correoexportado = "src/exportado/" + asunto.replace(" ","").replace(":","_") + ".txt";
+            fichero = new FileWriter(correoexportado);
+            String fileLocal = new String(correoexportado);
+             ResultSet rs = null;
+             rs = mysql.consulta("Select * from correos where id = '"+id+"' ");
+              while (rs.next()){
+               pw = new PrintWriter(fichero);
+               pw.println("#Titulo: " + rs.getString(4));
+               pw.println("#Enviado por: " + rs.getString(2));
+               pw.println("#Contenido:\n" + rs.getString(5));
+               pw.println("#######################################################\n");
+              }
+            JOptionPane.showMessageDialog(null, "Fichero exportado correctamente, acepta para abrir" , "Exportacion correcta",JOptionPane.PLAIN_MESSAGE);
+            Runtime.getRuntime().exec("cmd /c start "+fileLocal);
+        } catch (Exception e) {
+           JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE);
+        } finally {
+           try {
+           if (null != fichero)
+              fichero.close();
+           } catch (Exception e2) {
+              JOptionPane.showMessageDialog(null, e2.getMessage() , "Error",JOptionPane.ERROR_MESSAGE);
+           }
+        }
+    
+    }//GEN-LAST:event_exportarActionPerformed
+
+    private void borrarcorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarcorreoActionPerformed
+        // Borrar correo
+      int resp =JOptionPane.showConfirmDialog(null,"Seguro que quieres borrar el correo");
+      if (JOptionPane.OK_OPTION == resp){
+      mysql.accion("delete from correos where id = '"+id+"' ");
+      JOptionPane.showMessageDialog(null, "Correo borrado con exito" , "Correo borrado",JOptionPane.INFORMATION_MESSAGE);
+      mysql.close();
+      this.dispose();
+      } 
+    }//GEN-LAST:event_borrarcorreoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -185,8 +269,10 @@ public class VerCorreo extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Responder;
     private javax.swing.JLabel asuntoLabel;
+    private javax.swing.JButton borrarcorreo;
     private javax.swing.JTextArea contenidoField;
     private javax.swing.JLabel enviadoLabel;
+    private javax.swing.JButton exportar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
