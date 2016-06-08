@@ -1,8 +1,11 @@
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -82,6 +85,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
         TCorreos = new javax.swing.JTable();
         Salir = new javax.swing.JButton();
         escirbircorreo = new javax.swing.JButton();
+        exportar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Principal - Correo");
@@ -127,6 +131,13 @@ public class PrincipalCorreo extends javax.swing.JFrame {
             }
         });
 
+        exportar.setText("Exportar Correos");
+        exportar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -134,6 +145,11 @@ public class PrincipalCorreo extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(escirbircorreo)
+                        .addGap(65, 65, 65)
+                        .addComponent(exportar)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 694, Short.MAX_VALUE)
                         .addGap(28, 28, 28)
@@ -143,9 +159,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                         .addComponent(bienvenido)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(167, 167, 167)
-                        .addComponent(escirbircorreo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(167, 727, Short.MAX_VALUE)
                         .addComponent(Salir)
                         .addGap(70, 70, 70))))
         );
@@ -155,6 +169,10 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(bienvenido)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Salir)
+                        .addGap(27, 27, 27))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -163,13 +181,11 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(46, 46, 46)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(90, 90, 90)
-                        .addComponent(escirbircorreo)
-                        .addContainerGap(49, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Salir)
-                        .addGap(27, 27, 27))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(escirbircorreo)
+                            .addComponent(exportar))
+                        .addGap(52, 52, 52))))
         );
 
         pack();
@@ -184,6 +200,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
 
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
         // TODO add your handling code here:
+        mysql.close();
         System.exit(0);
     }//GEN-LAST:event_SalirActionPerformed
 
@@ -226,6 +243,39 @@ public class PrincipalCorreo extends javax.swing.JFrame {
         escribirn.setVisible(true);
     }//GEN-LAST:event_escirbircorreoActionPerformed
 
+    private void exportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportarActionPerformed
+        // Codigo para exportar correos
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+        String correoexportado = "src/correointernointerfaz/exportado/Correos.txt";
+        fichero = new FileWriter(correoexportado);
+        String fileLocal = new String(correoexportado);
+        ResultSet rs = null;
+        rs = mysql.consulta("Select * from correos where recibidop = '"+usuario+"' ");
+
+        while (rs.next()){
+               pw = new PrintWriter(fichero);
+               pw.println("#Titulo: " + rs.getString(4));
+               pw.println("#Enviado por: " + rs.getString(2));
+               pw.println("#Contenido:\n" + rs.getString(5));
+               pw.println("#######################################################\n");
+        }
+        JOptionPane.showMessageDialog(null, "Fichero exportado correctamente, acepta para abrir" , "Exportacion correcta",JOptionPane.PLAIN_MESSAGE);
+        Runtime.getRuntime().exec("cmd /c start "+fileLocal);
+        }catch (Exception e) {
+           JOptionPane.showMessageDialog(null, e.getMessage() , "Error" ,JOptionPane.ERROR_MESSAGE);
+        } finally {
+           try {
+           if (null != fichero)
+              fichero.close();
+           } catch (Exception e2) {
+              JOptionPane.showMessageDialog(null, e2.getMessage() , "Error",JOptionPane.ERROR_MESSAGE);
+           }
+        }
+    
+    }//GEN-LAST:event_exportarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -267,6 +317,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
     private javax.swing.JButton actualizar;
     private javax.swing.JLabel bienvenido;
     private javax.swing.JButton escirbircorreo;
+    private javax.swing.JButton exportar;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
