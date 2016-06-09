@@ -1,6 +1,7 @@
 
-
+import java.awt.HeadlessException;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,14 +16,20 @@ import org.apache.commons.net.ftp.FTPReply;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author aparracorbacho
  */
 public class EscribirCorreo extends javax.swing.JFrame {
+
     String usuario = null, recibidop = null, asunto = null, texto = null, archivo = null, nombre = null, archivos = null, narchivo = null;
+    int maximo = 0;
     public boolean existe = false;
+    Date date = new Date();
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+    String fechayhora = dateFormat.format(date) +"_" +hourFormat.format(date).replace(":","_");
+        
 
     /**
      * Creates new form EscribirCorreo
@@ -32,19 +39,20 @@ public class EscribirCorreo extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EscribirCorreo.DISPOSE_ON_CLOSE);
     }
-    
-     public void setValores(String usuario, String enviadop, String asunto, String texto){
+
+    public void setValores(String usuario, String enviadop, String asunto, String texto) {
         this.asunto = asunto;
         this.texto = texto;
         this.usuario = usuario;
         this.recibidop = enviadop;
         para.setText(enviadop);
-        asuntoField.setText("Re: " +asunto);
+        asuntoField.setText("Re: " + asunto);
         textoField.setText("\n=========================\n      Correo Anterior         \n=========================\n" + texto);
     }
-     public void setUsuario(String usuario){
-         this.usuario = usuario;
-     }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -193,86 +201,103 @@ public class EscribirCorreo extends javax.swing.JFrame {
         // Responder/Enviar correo
         MySqlC mysql = new MySqlC();
         mysql.conn();
-        Date date = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
         String fecha = dateFormat.format(date);
         String hora = hourFormat.format(date);
         String ienviadop = usuario;
-        String irecibidop =  para.getText();
+        String irecibidop = para.getText();
         String iasunto = asuntoField.getText();
         String itexto = textoField.getText();
         existe = mysql.compruebaEnv(irecibidop);
-        if ((irecibidop.trim().length()==0)||(iasunto.trim().length()==0)||(itexto.trim().length()==0)){
-            JOptionPane.showMessageDialog(null, "Faltan campos por cubrir" , "Error",JOptionPane.ERROR_MESSAGE);
-        } else if (existe == false){ JOptionPane.showMessageDialog(null, "El usuario al que quieres enviar el correo no existe" , "Error",JOptionPane.ERROR_MESSAGE); } else {
-        mysql.accion("Insert into correos (enviadop,recibidop,asunto,texto,fecha, hora, archivos, narchivo) values ('"+ienviadop+"','"+irecibidop+"','"+iasunto+"','"+itexto+"','"+fecha+"','"+hora+"','"+archivos+"', '"+narchivo+"')");
-        JOptionPane.showMessageDialog(null, "Correo enviado correctamente" , "Enviado!",JOptionPane.INFORMATION_MESSAGE);
-        this.dispose();
-        mysql.close();
+        if ((irecibidop.trim().length() == 0) || (iasunto.trim().length() == 0) || (itexto.trim().length() == 0)) {
+            JOptionPane.showMessageDialog(null, "Faltan campos por cubrir", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (existe == false) {
+            JOptionPane.showMessageDialog(null, "El usuario al que quieres enviar el correo no existe", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            mysql.accion("Insert into correos (enviadop,recibidop,asunto,texto,fecha, hora, archivos, narchivo) values ('" + ienviadop + "','" + irecibidop + "','" + iasunto + "','" + itexto + "','" + fecha + "','" + hora + "','" + archivos + "', '" + narchivo + "')");
+            JOptionPane.showMessageDialog(null, "Correo enviado correctamente", "Enviado!", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            mysql.close();
         }
     }//GEN-LAST:event_responderActionPerformed
 
     private void subir1FieldMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subir1FieldMousePressed
         // TODO add your handling code here:
-          // Buscar archivo para subir
+        // Buscar archivo para subir
         JFileChooser subir = new JFileChooser();
         int opcion = subir.showOpenDialog(null);
         if (opcion == JFileChooser.APPROVE_OPTION) {
-                        archivo = subir.getSelectedFile().getPath(); 
-                        nombre = subir.getSelectedFile().getName();
-                        subir1Field.setText(archivo);                                              
-                    }
+            archivo = subir.getSelectedFile().getPath();
+            nombre = subir.getSelectedFile().getName();
+            subir1Field.setText(archivo);
+        }
     }//GEN-LAST:event_subir1FieldMousePressed
 
     private void SubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubirActionPerformed
-             //Codigo para subir archivo         
+        //Codigo para subir archivo  
         String localfile = subir1Field.getText();
-        if ((localfile.trim().length() == 0)){ JOptionPane.showMessageDialog(null, "Para subir un archivo primero tienes que seleccionarlo" , "Error",JOptionPane.ERROR_MESSAGE); }
-        else {
-        
-        
-        String server = "51.254.137.26";
-	String username = "proyecto";
-	String password = "proyecto";
-        String destinationfile = nombre;
-	try
-	{
-		FTPClient ftp = new FTPClient();
-		ftp.connect(server);
-		if(!ftp.login(username, password))
-		{
-			ftp.logout();
-		}
-		int reply = ftp.getReplyCode();
-		if (!FTPReply.isPositiveCompletion(reply))
-		{
-			ftp.disconnect();
-	        }
-		InputStream in = new FileInputStream(localfile);
-		ftp.setFileType(ftp.BINARY_FILE_TYPE);
-		ftp.storeFile(destinationfile, in);
-                JOptionPane.showMessageDialog(null, "Archivo subido correctamente" , "Subido!",JOptionPane.INFORMATION_MESSAGE);
-                if (archivos == null) { archivos = "http://51.254.137.26/proyecto/" + destinationfile ; narchivo = destinationfile;  }
-                else {  archivos = archivos + "#http://51.254.137.26/proyecto/" + destinationfile ; narchivo = narchivo +"#" + destinationfile  ; }
-		in.close();
-		ftp.logout();
-		ftp.disconnect();
-                
-	}
-	catch (Exception ex)
-	{
-		ex.printStackTrace();
+       
+        if (maximo > 2) {
+            JOptionPane.showMessageDialog(null, "Solo se pueden subir tres archivos como maximo", "Error, limite alcanzado", JOptionPane.ERROR_MESSAGE);
+        } else {
+            
+            if ((localfile.trim().length() == 0)) {
+                JOptionPane.showMessageDialog(null, "Para subir un archivo primero tienes que seleccionarlo", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                String server = "51.254.137.26";
+                String username = "proyecto";
+                String password = "proyecto";
+                String destinationfile = nombre;
+                try {
+                    FTPClient ftp = new FTPClient();
+                    ftp.connect(server);
+                    if (!ftp.login(username, password)) {
+                        ftp.logout();
+                    }
+                    int reply = ftp.getReplyCode();
+                    if (!FTPReply.isPositiveCompletion(reply)) {
+                        ftp.disconnect();
+                    }
+                    InputStream in = new FileInputStream(localfile);
+                    ftp.setFileType(ftp.BINARY_FILE_TYPE);
+                               String nnombre = destinationfile;
+                               String original = "áàäéèëíìïóòöúùuñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑçÇ";
+                               String ascii = "aaaeeeiiiooouuunAAAEEEIIIOOOUUUNcC";
+                               for (int i=0; i<original.length(); i++) {
+                               nnombre = nnombre.replace(original.charAt(i), ascii.charAt(i));
+                               }
+                               nnombre = nnombre.replaceAll("ASCII", "").replace(" ", "_").replace("(","").replace(")","").replace(".", "_"+fechayhora+".");
+                                                   
+                    destinationfile = nnombre;                                  
+                                                                        
+                                       
+                    ftp.storeFile(destinationfile, in);
+                    JOptionPane.showMessageDialog(null, "Archivo subido correctamente", "Subido!", JOptionPane.INFORMATION_MESSAGE);
+                    if (archivos == null) {
+                        archivos = "51.254.137.26/proyecto/" + destinationfile;
+                        narchivo = destinationfile;
+                    } else {
+                        archivos = archivos + "#51.254.137.26/proyecto/" + destinationfile;
+                        narchivo = narchivo + "#" + destinationfile;
+                    }
+                    in.close();
+                    ftp.logout();
+                    ftp.disconnect();
+                    maximo++;
+
+                } catch (IOException | HeadlessException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
-        }
-           
+         
     }//GEN-LAST:event_SubirActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Codigo para subir otro archivo
         subir1Field.setText("");
-        JOptionPane.showMessageDialog(null, "Selecciona otro archivo para subir" , "Preparado!",JOptionPane.INFORMATION_MESSAGE);
-        
+        JOptionPane.showMessageDialog(null, "Selecciona otro archivo para subir", "Preparado!", JOptionPane.INFORMATION_MESSAGE);
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

@@ -1,38 +1,39 @@
 
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author aparracorbacho
  */
 public class VerCorreo extends javax.swing.JFrame {
+
     String enviadop, asunto, texto, hora, fecha, archivos, narchivos;
     String usuario;
     int id;
     MySqlC mysql = new MySqlC();
-    String[] archivosAdjuntos;
-    
-    
-    
+    static String[] archivosAdjuntos;
+    static String nombrearchivo;
+        
+
     /**
      * Creates new form VerCorreo
      */
@@ -42,20 +43,18 @@ public class VerCorreo extends javax.swing.JFrame {
         setDefaultCloseOperation(VerCorreo.DISPOSE_ON_CLOSE);
         mysql.conn();
     }
-    
-    
-    public void setValores(int id){
+
+    public void setValores(int id) {
         this.id = id;
         try {
-            String sqlcargar = "Select * from correos where id = '"+id+"'";
+            String sqlcargar = "Select * from correos where id = '" + id + "'";
             ResultSet rs = mysql.consulta(sqlcargar);
-            while(rs.next()){
+            while (rs.next()) {
                 enviadop = rs.getString(2);
                 asunto = rs.getString(4);
                 texto = rs.getString(5);
                 fecha = rs.getString(6);
                 hora = rs.getString(7);
-                archivos = rs.getString(8);
                 narchivos = rs.getString(9);
             }
             enviadoLabel.setText(enviadop);
@@ -63,44 +62,78 @@ public class VerCorreo extends javax.swing.JFrame {
             contenidoField.setText(texto);
             fechaField.setText(fecha);
             horaField.setText(hora);
-            archivosAdjuntos = narchivos.split("#");
-            int carchivos = 0;
-            for(int i=0; i<archivosAdjuntos.length; i++) { 
-                if (carchivos == 0) { adjuntosField.setText(archivosAdjuntos[i]); }
-                else { adjuntosField.setText(adjuntosField.getText()+"<br>" +archivosAdjuntos[i]); }
-                carchivos++;
+            contenidoField.setEditable(false);
+            if ((narchivos.trim().length() == 0) || ("null".equals(narchivos))) {
+                adjuntosField.setText("No hay ningun adjunto");
+            } else {
+                archivosAdjuntos = narchivos.split("#");
+                int carchivos = 0;
+                int altura = 350;
+                for (int i = 0; i < archivosAdjuntos.length; i++) {
+                    if (carchivos == 0) {
+                        adjuntosField.setText(archivosAdjuntos[i]);
+                    } else {
+                        adjuntosField.setText(adjuntosField.getText() + "<br>" + archivosAdjuntos[i]);
+                    }
+                    carchivos++;
+                    nombrearchivo = archivosAdjuntos[i];                                                              
+                    
+                    JButton boton = new JButton();
+                    
+                    i = i + 1;
+                    boton.setName(String.valueOf(i));
+                    boton.setText("Abrir adjunto " + i);
+                    boton.setBounds(650, altura, 120, 25);
+                    altura = 350 + 22 * i;
+                    i = i - 1;
+                    
+                    boton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                           
+                     
+                            try {
+                                JButton presionado = (JButton)e.getSource();
+                                for (int i = 0; i < archivosAdjuntos.length; i++) { if (i == (Integer.parseInt(presionado.getName())-1)) {nombrearchivo = archivosAdjuntos[i];}}
+                                String server = "51.254.137.26";
+                                String username = "proyecto";
+                                String password = "proyecto";
+                                FileOutputStream darchivo;
+                                FTPClient ftp = new FTPClient();
+                                ftp.connect(server);
+                                ftp.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE); 
+                                ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
+                                if (!ftp.login(username, password)) {
+                                    ftp.logout();
+                                }
+                                int reply = ftp.getReplyCode();
+                                if (!FTPReply.isPositiveCompletion(reply)) {
+                                    ftp.disconnect();
+                                }
+
+                                darchivo = new FileOutputStream(nombrearchivo);
+                                ftp.retrieveFile(nombrearchivo, darchivo);
+                                darchivo.close();                               
+                                JOptionPane.showMessageDialog(null, "Archivo descargado correctamente, pulsa aceptar para abrirlo", "Descargado!", JOptionPane.INFORMATION_MESSAGE);
+                                Runtime.getRuntime().exec("cmd /c start "+nombrearchivo);
+                                
+                                ftp.logout();
+                                ftp.disconnect();
+                               } catch (IOException ex) {
+                                Logger.getLogger(VerCorreo.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            
+                        }
+                    });
+                  add(boton);  
+                }
+                 adjuntosField.setText("<html><body>" + adjuntosField.getText() + "</html></body>");
             }
-            adjuntosField.setText("<html><body>" + adjuntosField.getText() + "</html></body>");
-            contenidoField.setEditable(false); 
-            
-            for(int i=0; i<archivosAdjuntos.length; i++) {
-                i = i +1;
-                String idb = String.valueOf(i);
-                JButton boton = new JButton();
-                boton.setName(boton+String.valueOf(i));
-                boton.setText("Abrir adjunto "+i);
-                i = i - 1;
-                int altura = 340 + 20 * i;
-                boton.setBounds(400,altura,120,25);
-                add(boton);
-               // boton.addActionListener(this.actionPerformed(botonver));
-            }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(VerCorreo.class.getName()).log(Level.SEVERE, null, ex);
         }
-     }
-    
-    public void actionPerformed(ActionEvent botonver) {
-          for(int i=0; i<archivosAdjuntos.length; i++) {
-                i = i +1;
-               if (botonver.getSource()== ("boton"+String.valueOf(i))) {
-               setTitle("boton "+i);
-               }
-            }     
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -265,11 +298,11 @@ public class VerCorreo extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(adjuntosField))
-                .addGap(100, 100, 100)
+                .addGap(79, 79, 79)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportar)
                     .addComponent(salirdecorreo))
@@ -296,46 +329,46 @@ public class VerCorreo extends javax.swing.JFrame {
         // Codigo para exportar correo
         FileWriter fichero = null;
         PrintWriter pw = null;
-        try
-        {   
-            String correoexportado = "src/exportado/" + asunto.replace(" ","").replace(":","_") + ".txt";
+        try {
+            String correoexportado = asunto.replace(" ", "").replace(":", "_") + ".txt";
             fichero = new FileWriter(correoexportado);
             String fileLocal = new String(correoexportado);
-             ResultSet rs = null;
-             rs = mysql.consulta("Select * from correos where id = '"+id+"' ");
-              while (rs.next()){
-               pw = new PrintWriter(fichero);
-               pw.println("#Titulo: " + rs.getString(4));
-               pw.println("#Enviado por: " + rs.getString(2));
-               pw.println("#Fecha y hora: "+rs.getString(6) + " " +rs.getString(7));
-               pw.println("#Contenido:\n" + rs.getString(5));
-               pw.println("#######################################################\n");
-              }
-            JOptionPane.showMessageDialog(null, "Fichero exportado correctamente, acepta para abrir" , "Exportacion correcta",JOptionPane.PLAIN_MESSAGE);
-            Runtime.getRuntime().exec("cmd /c start "+fileLocal);
+            ResultSet rs = null;
+            rs = mysql.consulta("Select * from correos where id = '" + id + "' ");
+            while (rs.next()) {
+                pw = new PrintWriter(fichero);
+                pw.println("#Titulo: " + rs.getString(4));
+                pw.println("#Enviado por: " + rs.getString(2));
+                pw.println("#Fecha y hora: " + rs.getString(6) + " " + rs.getString(7));
+                pw.println("#Contenido:\n" + rs.getString(5));
+                pw.println("#######################################################\n");
+            }
+            JOptionPane.showMessageDialog(null, "Fichero exportado correctamente, acepta para abrir", "Exportacion correcta", JOptionPane.PLAIN_MESSAGE);
+            Runtime.getRuntime().exec("cmd /c start " + fileLocal);
         } catch (Exception e) {
-           JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } finally {
-           try {
-           if (null != fichero)
-              fichero.close();
-           } catch (Exception e2) {
-              JOptionPane.showMessageDialog(null, e2.getMessage() , "Error",JOptionPane.ERROR_MESSAGE);
-           }
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                JOptionPane.showMessageDialog(null, e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
-    
+
     }//GEN-LAST:event_exportarActionPerformed
 
     private void borrarcorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarcorreoActionPerformed
         // Borrar correo
-      int resp =JOptionPane.showConfirmDialog(null,"Seguro que quieres borrar el correo");
-      if (JOptionPane.OK_OPTION == resp){
-      mysql.accion("delete from correos where id = '"+id+"' ");
-      JOptionPane.showMessageDialog(null, "Correo borrado con exito" , "Correo borrado",JOptionPane.INFORMATION_MESSAGE);
-      mysql.close();
-      this.dispose();
-      
-      } 
+        int resp = JOptionPane.showConfirmDialog(null, "Seguro que quieres borrar el correo");
+        if (JOptionPane.OK_OPTION == resp) {
+            mysql.accion("delete from correos where id = '" + id + "' ");
+            JOptionPane.showMessageDialog(null, "Correo borrado con exito", "Correo borrado", JOptionPane.INFORMATION_MESSAGE);
+            mysql.close();
+            this.dispose();
+
+        }
     }//GEN-LAST:event_borrarcorreoActionPerformed
 
     /**
@@ -392,4 +425,5 @@ public class VerCorreo extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton salirdecorreo;
     // End of variables declaration//GEN-END:variables
+
 }

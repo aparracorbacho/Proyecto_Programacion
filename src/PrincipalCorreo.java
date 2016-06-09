@@ -233,7 +233,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
         FileWriter fichero = null;
         PrintWriter pw = null;
         try {
-        String correoexportado = "src/exportado/Correos.txt";
+        String correoexportado = "Correos.txt";
         fichero = new FileWriter(correoexportado);
         String fileLocal = new String(correoexportado);
         ResultSet rs = null;
