@@ -1,4 +1,7 @@
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /*
@@ -141,6 +144,11 @@ public class EscribirCorreo extends javax.swing.JFrame {
         // Responder/Enviar correo
         MySqlC mysql = new MySqlC();
         mysql.conn();
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+        String fecha = dateFormat.format(date);
+        String hora = hourFormat.format(date);
         String ienviadop = usuario;
         String irecibidop =  para.getText();
         String iasunto = asuntoField.getText();
@@ -149,7 +157,7 @@ public class EscribirCorreo extends javax.swing.JFrame {
         if ((irecibidop.trim().length()==0)||(iasunto.trim().length()==0)||(itexto.trim().length()==0)){
             JOptionPane.showMessageDialog(null, "Faltan campos por cubrir" , "Error",JOptionPane.ERROR_MESSAGE);
         } else if (existe == false){ JOptionPane.showMessageDialog(null, "El usuario al que quieres enviar el correo no existe" , "Error",JOptionPane.ERROR_MESSAGE); } else {
-        mysql.accion("Insert into correos (enviadop,recibidop,asunto,texto) values ('"+ienviadop+"','"+irecibidop+"','"+iasunto+"','"+itexto+"')");
+        mysql.accion("Insert into correos (enviadop,recibidop,asunto,texto,fecha, hora) values ('"+ienviadop+"','"+irecibidop+"','"+iasunto+"','"+itexto+"','"+fecha+"','"+hora+"')");
         JOptionPane.showMessageDialog(null, "Correo enviado correctamente" , "Enviado!",JOptionPane.INFORMATION_MESSAGE);
         this.dispose();
         mysql.close();

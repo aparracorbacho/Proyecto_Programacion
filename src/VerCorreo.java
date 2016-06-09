@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  * @author aparracorbacho
  */
 public class VerCorreo extends javax.swing.JFrame {
-    String enviadop, asunto, texto;
+    String enviadop, asunto, texto, hora, fecha;
     String usuario;
     int id;
     MySqlC mysql = new MySqlC();
@@ -30,15 +30,19 @@ public class VerCorreo extends javax.swing.JFrame {
         mysql.conn();
     }
     
-     public void setValores(String usuario, String enviadop, String asunto, String texto, int id){
+     public void setValores(String usuario, String enviadop, String asunto, String texto, int id, String fecha, String hora){
         this.id = id;
         this.enviadop= enviadop;
         this.asunto = asunto;
         this.texto = texto;
         this.usuario = usuario;
+        this.hora = hora;
+        this.fecha = fecha;
         enviadoLabel.setText(enviadop);
         asuntoLabel.setText(asunto);
         contenidoField.setText(texto);
+        fechaField.setText(fecha);
+        horaField.setText(hora);
         contenidoField.setEditable(false); 
     }
 
@@ -62,6 +66,10 @@ public class VerCorreo extends javax.swing.JFrame {
         Responder = new javax.swing.JButton();
         exportar = new javax.swing.JButton();
         borrarcorreo = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        fechaField = new javax.swing.JLabel();
+        horaField = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ver Correo - Correo");
@@ -108,6 +116,14 @@ public class VerCorreo extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Fecha:");
+
+        jLabel5.setText("Hora:");
+
+        fechaField.setText("fecha");
+
+        horaField.setText("hora");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -123,9 +139,20 @@ public class VerCorreo extends javax.swing.JFrame {
                                 .addComponent(jLabel2)))
                         .addGap(36, 36, 36)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(enviadoLabel)
-                            .addComponent(asuntoLabel)
-                            .addComponent(jScrollPane1)))
+                            .addComponent(jScrollPane1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(asuntoLabel)
+                                    .addComponent(enviadoLabel))
+                                .addGap(157, 157, 157)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(horaField)
+                                    .addComponent(fechaField))
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(208, 208, 208)
                         .addComponent(exportar)
@@ -142,14 +169,25 @@ public class VerCorreo extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(enviadoLabel))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(enviadoLabel)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(fechaField))))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(asuntoLabel))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(asuntoLabel))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addComponent(horaField)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
@@ -202,6 +240,7 @@ public class VerCorreo extends javax.swing.JFrame {
                pw = new PrintWriter(fichero);
                pw.println("#Titulo: " + rs.getString(4));
                pw.println("#Enviado por: " + rs.getString(2));
+               pw.println("#Fecha y hora: "+rs.getString(6) + " " +rs.getString(7));
                pw.println("#Contenido:\n" + rs.getString(5));
                pw.println("#######################################################\n");
               }
@@ -228,6 +267,7 @@ public class VerCorreo extends javax.swing.JFrame {
       JOptionPane.showMessageDialog(null, "Correo borrado con exito" , "Correo borrado",JOptionPane.INFORMATION_MESSAGE);
       mysql.close();
       this.dispose();
+      
       } 
     }//GEN-LAST:event_borrarcorreoActionPerformed
 
@@ -273,9 +313,13 @@ public class VerCorreo extends javax.swing.JFrame {
     private javax.swing.JTextArea contenidoField;
     private javax.swing.JLabel enviadoLabel;
     private javax.swing.JButton exportar;
+    private javax.swing.JLabel fechaField;
+    private javax.swing.JLabel horaField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton salirdecorreo;
     // End of variables declaration//GEN-END:variables
