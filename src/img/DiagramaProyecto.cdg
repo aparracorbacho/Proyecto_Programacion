@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="DiagramaProyecto">
+  <ClassDiagramComponents>
+    <Class name="MySqlC" package="" visibility="public" xPosition="212.0" yPosition="384.0">
+      <Fields>
+        <Field name="bd" type="String" visibility="private"/>
+        <Field name="password" type="String" visibility="private"/>
+        <Field name="login" type="String" visibility="private"/>
+        <Field name="Url" type="Strin" visibility="private"/>
+        <Field name="conn" type="Connection" visibility="private"/>
+        <Field name="stmt" type="Statment" visibility="private"/>
+        <Field name="existe" type="boolean" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="conn" returnType="void" visibility="public"/>
+        <Method name="close" returnType="void" visibility="public"/>
+        <Method name="consulta" returnType="resultset" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="Login" package="" visibility="public" xPosition="480.0" yPosition="22.0">
+      <Fields>
+        <Field name="usuario" type="String" visibility="private"/>
+        <Field name="pass" type="String" visibility="private"/>
+        <Field name="mysql" type="Object" visibility="private"/>
+        <Field name="principal" type="Object" visibility="private"/>
+        <Field name="registro" type="Object" visibility="private"/>
+        <Field name="recuperar" type="object" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="Recuperar" package="" visibility="public" xPosition="8.0" yPosition="12.0">
+      <Fields>
+        <Field name="existe" type="boolean" visibility="private"/>
+        <Field name="mysql" type="Object" visibility="private"/>
+        <Field name="usuario" type="String" visibility="private"/>
+        <Field name="pregunta" type="String" visibility="private"/>
+        <Field name="Rs" type="ResulSet" visibility="private"/>
+        <Field name="untitledField" type="Object" visibility="private"/>
+        <Field name="usuario" type="Strin" visibility="private"/>
+        <Field name="ipass" type="String" visibility="private"/>
+        <Field name="irepsuesta" type="String" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="Registro" package="" visibility="public" xPosition="268.0" yPosition="127.0">
+      <Fields>
+        <Field name="existe" type="boolean" visibility="private"/>
+        <Field name="mysql" type="object" visibility="private"/>
+        <Field name="usuario" type="String" visibility="private"/>
+        <Field name="pass" type="String" visibility="private"/>
+        <Field name="cpass" type="String" visibility="private"/>
+        <Field name="seguirdad" type="String" visibility="private"/>
+        <Field name="respuesta" type="Strin" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="VerCorreo" package="" visibility="public" xPosition="395.0" yPosition="639.0">
+      <Fields>
+        <Field name="enviadop" type="String" visibility="private"/>
+        <Field name="asunto" type="String" visibility="private"/>
+        <Field name="texto" type="String" visibility="private"/>
+        <Field name="hora" type="String" visibility="private"/>
+        <Field name="fecha" type="String" visibility="private"/>
+        <Field name="archivos" type="String" visibility="private"/>
+        <Field name="usuario" type="String" visibility="private"/>
+        <Field name="id" type="int" visibility="private"/>
+        <Field name="mysql" type="object" visibility="private"/>
+        <Field name="escribir" type="object" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods>
+        <Method name="valores" returnType="set" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="PrincipalCorreo" package="" visibility="public" xPosition="815.0" yPosition="12.0">
+      <Fields>
+        <Field name="object" type="object" visibility="private"/>
+        <Field name="usuario" type="String" visibility="private"/>
+        <Field name="mysql" type="Object" visibility="private"/>
+        <Field name="verCorreo" type="Object" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="EscribirCorreo" package="" visibility="public" xPosition="638.0" yPosition="365.0">
+      <Fields>
+        <Field name="usuario" type="String" visibility="private"/>
+        <Field name="recibido" type="String" visibility="private"/>
+        <Field name="asunto" type="String" visibility="private"/>
+        <Field name="texto" type="String" visibility="private"/>
+        <Field name="nombre" type="String" visibility="private"/>
+        <Field name="archivos" type="String" visibility="private"/>
+        <Field name="enviadop" type="String" visibility="private"/>
+        <Field name="ienviadop" type="String" visibility="private"/>
+        <Field name="irecibidop" type="String" visibility="private"/>
+        <Field name="iasunto" type="String" visibility="private"/>
+        <Field name="existe" type="boolean" visibility="private"/>
+        <Field name="mysql" type="object" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations>
+    <UseRelation name="" source="EscribirCorreo" target="PrincipalCorreo" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="Registro" target="Login" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="MySqlC" target="Recuperar" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="PrincipalCorreo" target="Login" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="MySqlC" target="Login" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="MySqlC" target="Registro" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="Recuperar" target="Login" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="MySqlC" target="EscribirCorreo" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="MySqlC" target="PrincipalCorreo" sourceCardinality="1..1" targetCardinality="1..1"/>
+  </ClassDiagramRelations>
+</ClassDiagram>
