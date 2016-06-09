@@ -94,7 +94,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         TCorreos = new javax.swing.JTable();
         Salir = new javax.swing.JButton();
-        escirbircorreo = new javax.swing.JButton();
+        escribircorreo = new javax.swing.JButton();
         exportar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -134,10 +134,10 @@ public class PrincipalCorreo extends javax.swing.JFrame {
             }
         });
 
-        escirbircorreo.setText("Escribir correo");
-        escirbircorreo.addActionListener(new java.awt.event.ActionListener() {
+        escribircorreo.setText("Escribir correo");
+        escribircorreo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                escirbircorreoActionPerformed(evt);
+                escribircorreoActionPerformed(evt);
             }
         });
 
@@ -156,7 +156,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(escirbircorreo)
+                        .addComponent(escribircorreo)
                         .addGap(65, 65, 65)
                         .addComponent(exportar)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -187,7 +187,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(escirbircorreo)
+                            .addComponent(escribircorreo)
                             .addComponent(exportar))
                         .addGap(52, 52, 52))))
         );
@@ -221,12 +221,12 @@ public class PrincipalCorreo extends javax.swing.JFrame {
                
     }//GEN-LAST:event_TCorreosMouseClicked
 
-    private void escirbircorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escirbircorreoActionPerformed
+    private void escribircorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_escribircorreoActionPerformed
         // TODO add your handling code here:
         EscribirCorreo escribirn = new EscribirCorreo();
         escribirn.setUsuario(usuario);
         escribirn.setVisible(true);
-    }//GEN-LAST:event_escirbircorreoActionPerformed
+    }//GEN-LAST:event_escribircorreoActionPerformed
 
     private void exportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportarActionPerformed
         // Codigo para exportar correos
@@ -302,7 +302,7 @@ public class PrincipalCorreo extends javax.swing.JFrame {
     private javax.swing.JTable TCorreos;
     private javax.swing.JButton actualizar;
     private javax.swing.JLabel bienvenido;
-    private javax.swing.JButton escirbircorreo;
+    private javax.swing.JButton escribircorreo;
     private javax.swing.JButton exportar;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables

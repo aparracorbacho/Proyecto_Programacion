@@ -21,7 +21,7 @@ import org.apache.commons.net.ftp.FTPReply;
  * @author aparracorbacho
  */
 public class EscribirCorreo extends javax.swing.JFrame {
-    String usuario = null, recibidop = null, asunto = null, texto = null, archivo = null, nombre = null, archivos = null;
+    String usuario = null, recibidop = null, asunto = null, texto = null, archivo = null, nombre = null, archivos = null, narchivo = null;
     public boolean existe = false;
 
     /**
@@ -30,7 +30,7 @@ public class EscribirCorreo extends javax.swing.JFrame {
     public EscribirCorreo() {
         initComponents();
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(VerCorreo.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EscribirCorreo.DISPOSE_ON_CLOSE);
     }
     
      public void setValores(String usuario, String enviadop, String asunto, String texto){
@@ -206,7 +206,7 @@ public class EscribirCorreo extends javax.swing.JFrame {
         if ((irecibidop.trim().length()==0)||(iasunto.trim().length()==0)||(itexto.trim().length()==0)){
             JOptionPane.showMessageDialog(null, "Faltan campos por cubrir" , "Error",JOptionPane.ERROR_MESSAGE);
         } else if (existe == false){ JOptionPane.showMessageDialog(null, "El usuario al que quieres enviar el correo no existe" , "Error",JOptionPane.ERROR_MESSAGE); } else {
-        mysql.accion("Insert into correos (enviadop,recibidop,asunto,texto,fecha, hora, archivos) values ('"+ienviadop+"','"+irecibidop+"','"+iasunto+"','"+itexto+"','"+fecha+"','"+hora+"','"+archivos+"')");
+        mysql.accion("Insert into correos (enviadop,recibidop,asunto,texto,fecha, hora, archivos, narchivo) values ('"+ienviadop+"','"+irecibidop+"','"+iasunto+"','"+itexto+"','"+fecha+"','"+hora+"','"+archivos+"', '"+narchivo+"')");
         JOptionPane.showMessageDialog(null, "Correo enviado correctamente" , "Enviado!",JOptionPane.INFORMATION_MESSAGE);
         this.dispose();
         mysql.close();
@@ -221,14 +221,17 @@ public class EscribirCorreo extends javax.swing.JFrame {
         if (opcion == JFileChooser.APPROVE_OPTION) {
                         archivo = subir.getSelectedFile().getPath(); 
                         nombre = subir.getSelectedFile().getName();
-                        subir1Field.setText(archivo);
-                        
+                        subir1Field.setText(archivo);                                              
                     }
     }//GEN-LAST:event_subir1FieldMousePressed
 
     private void SubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubirActionPerformed
              //Codigo para subir archivo         
         String localfile = subir1Field.getText();
+        if ((localfile.trim().length() == 0)){ JOptionPane.showMessageDialog(null, "Para subir un archivo primero tienes que seleccionarlo" , "Error",JOptionPane.ERROR_MESSAGE); }
+        else {
+        
+        
         String server = "51.254.137.26";
 	String username = "proyecto";
 	String password = "proyecto";
@@ -250,8 +253,8 @@ public class EscribirCorreo extends javax.swing.JFrame {
 		ftp.setFileType(ftp.BINARY_FILE_TYPE);
 		ftp.storeFile(destinationfile, in);
                 JOptionPane.showMessageDialog(null, "Archivo subido correctamente" , "Subido!",JOptionPane.INFORMATION_MESSAGE);
-                if (archivos == null) { archivos = "http://51.254.137.26/proyecto/" + destinationfile ; }
-                else {  archivos = archivos + "#http://51.254.137.26/proyecto/" + destinationfile ; }
+                if (archivos == null) { archivos = "http://51.254.137.26/proyecto/" + destinationfile ; narchivo = destinationfile;  }
+                else {  archivos = archivos + "#http://51.254.137.26/proyecto/" + destinationfile ; narchivo = narchivo +"#" + destinationfile  ; }
 		in.close();
 		ftp.logout();
 		ftp.disconnect();
@@ -261,7 +264,7 @@ public class EscribirCorreo extends javax.swing.JFrame {
 	{
 		ex.printStackTrace();
         }
-    
+        }
            
     }//GEN-LAST:event_SubirActionPerformed
 

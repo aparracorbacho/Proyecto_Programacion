@@ -1,10 +1,17 @@
 
+import java.awt.Desktop;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 /*
@@ -18,10 +25,13 @@ import javax.swing.JOptionPane;
  * @author aparracorbacho
  */
 public class VerCorreo extends javax.swing.JFrame {
-    String enviadop, asunto, texto, hora, fecha, archivos;
+    String enviadop, asunto, texto, hora, fecha, archivos, narchivos;
     String usuario;
     int id;
     MySqlC mysql = new MySqlC();
+    String[] archivosAdjuntos;
+    
+    
     
     /**
      * Creates new form VerCorreo
@@ -32,6 +42,7 @@ public class VerCorreo extends javax.swing.JFrame {
         setDefaultCloseOperation(VerCorreo.DISPOSE_ON_CLOSE);
         mysql.conn();
     }
+    
     
     public void setValores(int id){
         this.id = id;
@@ -45,24 +56,51 @@ public class VerCorreo extends javax.swing.JFrame {
                 fecha = rs.getString(6);
                 hora = rs.getString(7);
                 archivos = rs.getString(8);
+                narchivos = rs.getString(9);
             }
             enviadoLabel.setText(enviadop);
             asuntoLabel.setText(asunto);
             contenidoField.setText(texto);
             fechaField.setText(fecha);
             horaField.setText(hora);
-            String[] archivosAdjuntos = archivos.split("#");
+            archivosAdjuntos = narchivos.split("#");
             int carchivos = 0;
             for(int i=0; i<archivosAdjuntos.length; i++) { 
                 if (carchivos == 0) { adjuntosField.setText(archivosAdjuntos[i]); }
-                else { adjuntosField.setText(adjuntosField.getText()+ "<br>"+ archivosAdjuntos[i]); }
+                else { adjuntosField.setText(adjuntosField.getText()+"<br>" +archivosAdjuntos[i]); }
                 carchivos++;
             }
+            adjuntosField.setText("<html><body>" + adjuntosField.getText() + "</html></body>");
             contenidoField.setEditable(false); 
+            
+            for(int i=0; i<archivosAdjuntos.length; i++) {
+                i = i +1;
+                String idb = String.valueOf(i);
+                JButton boton = new JButton();
+                boton.setName(boton+String.valueOf(i));
+                boton.setText("Abrir adjunto "+i);
+                i = i - 1;
+                int altura = 340 + 20 * i;
+                boton.setBounds(400,altura,120,25);
+                add(boton);
+               // boton.addActionListener(this.actionPerformed(botonver));
+            }
+            
         } catch (SQLException ex) {
             Logger.getLogger(VerCorreo.class.getName()).log(Level.SEVERE, null, ex);
         }
      }
+    
+    public void actionPerformed(ActionEvent botonver) {
+          for(int i=0; i<archivosAdjuntos.length; i++) {
+                i = i +1;
+               if (botonver.getSource()== ("boton"+String.valueOf(i))) {
+               setTitle("boton "+i);
+               }
+            }     
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -145,6 +183,8 @@ public class VerCorreo extends javax.swing.JFrame {
         horaField.setText("hora");
 
         jLabel6.setText("Archivos adjuntos:");
+
+        adjuntosField.setText("adjuntos");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
