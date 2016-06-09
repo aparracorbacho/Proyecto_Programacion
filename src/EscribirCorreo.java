@@ -1,8 +1,14 @@
 
+
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -15,7 +21,7 @@ import javax.swing.JOptionPane;
  * @author aparracorbacho
  */
 public class EscribirCorreo extends javax.swing.JFrame {
-    String usuario = null, recibidop = null, asunto = null, texto = null;
+    String usuario = null, recibidop = null, asunto = null, texto = null, archivo = null, nombre = null, archivos = null;
     public boolean existe = false;
 
     /**
@@ -58,6 +64,10 @@ public class EscribirCorreo extends javax.swing.JFrame {
         textoField = new javax.swing.JTextArea();
         responder = new javax.swing.JButton();
         salir = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        subir1Field = new javax.swing.JTextField();
+        Subir = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Escribir/Responder - Correo");
@@ -86,6 +96,28 @@ public class EscribirCorreo extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Adjuntar archivos:");
+
+        subir1Field.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                subir1FieldMousePressed(evt);
+            }
+        });
+
+        Subir.setText("Subir");
+        Subir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SubirActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Subir otro archivo");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -104,11 +136,21 @@ public class EscribirCorreo extends javax.swing.JFrame {
                         .addComponent(salir)
                         .addGap(85, 85, 85))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(para, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(asuntoField, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 548, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(104, Short.MAX_VALUE))))
+                        .addComponent(jLabel4)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(subir1Field, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addComponent(Subir)
+                                .addGap(37, 37, 37)
+                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(para, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(asuntoField, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 548, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(134, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -125,7 +167,14 @@ public class EscribirCorreo extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(subir1Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Subir)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(responder)
                     .addComponent(salir))
@@ -157,12 +206,71 @@ public class EscribirCorreo extends javax.swing.JFrame {
         if ((irecibidop.trim().length()==0)||(iasunto.trim().length()==0)||(itexto.trim().length()==0)){
             JOptionPane.showMessageDialog(null, "Faltan campos por cubrir" , "Error",JOptionPane.ERROR_MESSAGE);
         } else if (existe == false){ JOptionPane.showMessageDialog(null, "El usuario al que quieres enviar el correo no existe" , "Error",JOptionPane.ERROR_MESSAGE); } else {
-        mysql.accion("Insert into correos (enviadop,recibidop,asunto,texto,fecha, hora) values ('"+ienviadop+"','"+irecibidop+"','"+iasunto+"','"+itexto+"','"+fecha+"','"+hora+"')");
+        mysql.accion("Insert into correos (enviadop,recibidop,asunto,texto,fecha, hora, archivos) values ('"+ienviadop+"','"+irecibidop+"','"+iasunto+"','"+itexto+"','"+fecha+"','"+hora+"','"+archivos+"')");
         JOptionPane.showMessageDialog(null, "Correo enviado correctamente" , "Enviado!",JOptionPane.INFORMATION_MESSAGE);
         this.dispose();
         mysql.close();
         }
     }//GEN-LAST:event_responderActionPerformed
+
+    private void subir1FieldMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subir1FieldMousePressed
+        // TODO add your handling code here:
+          // Buscar archivo para subir
+        JFileChooser subir = new JFileChooser();
+        int opcion = subir.showOpenDialog(null);
+        if (opcion == JFileChooser.APPROVE_OPTION) {
+                        archivo = subir.getSelectedFile().getPath(); 
+                        nombre = subir.getSelectedFile().getName();
+                        subir1Field.setText(archivo);
+                        
+                    }
+    }//GEN-LAST:event_subir1FieldMousePressed
+
+    private void SubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubirActionPerformed
+             //Codigo para subir archivo         
+        String localfile = subir1Field.getText();
+        String server = "51.254.137.26";
+	String username = "proyecto";
+	String password = "proyecto";
+        String destinationfile = nombre;
+	try
+	{
+		FTPClient ftp = new FTPClient();
+		ftp.connect(server);
+		if(!ftp.login(username, password))
+		{
+			ftp.logout();
+		}
+		int reply = ftp.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(reply))
+		{
+			ftp.disconnect();
+	        }
+		InputStream in = new FileInputStream(localfile);
+		ftp.setFileType(ftp.BINARY_FILE_TYPE);
+		ftp.storeFile(destinationfile, in);
+                JOptionPane.showMessageDialog(null, "Archivo subido correctamente" , "Subido!",JOptionPane.INFORMATION_MESSAGE);
+                if (archivos == null) { archivos = "http://51.254.137.26/proyecto/" + destinationfile ; }
+                else {  archivos = archivos + "#http://51.254.137.26/proyecto/" + destinationfile ; }
+		in.close();
+		ftp.logout();
+		ftp.disconnect();
+                
+	}
+	catch (Exception ex)
+	{
+		ex.printStackTrace();
+        }
+    
+           
+    }//GEN-LAST:event_SubirActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // Codigo para subir otro archivo
+        subir1Field.setText("");
+        JOptionPane.showMessageDialog(null, "Selecciona otro archivo para subir" , "Preparado!",JOptionPane.INFORMATION_MESSAGE);
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -200,14 +308,18 @@ public class EscribirCorreo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Subir;
     private javax.swing.JTextField asuntoField;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField para;
     private javax.swing.JButton responder;
     private javax.swing.JButton salir;
+    private javax.swing.JTextField subir1Field;
     private javax.swing.JTextArea textoField;
     // End of variables declaration//GEN-END:variables
 }

@@ -40,12 +40,25 @@
                       <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="para" alignment="0" min="-2" pref="116" max="-2" attributes="0"/>
-                          <Component id="asuntoField" alignment="0" min="-2" pref="313" max="-2" attributes="0"/>
-                          <Component id="jScrollPane1" min="-2" pref="548" max="-2" attributes="0"/>
+                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="subir1Field" min="-2" pref="269" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                              <Component id="Subir" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                              <Component id="jButton1" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="para" alignment="0" min="-2" pref="116" max="-2" attributes="0"/>
+                              <Component id="asuntoField" alignment="0" min="-2" pref="313" max="-2" attributes="0"/>
+                              <Component id="jScrollPane1" min="-2" pref="548" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace pref="104" max="32767" attributes="0"/>
+                      <EmptySpace pref="134" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -69,7 +82,15 @@
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <Component id="jScrollPane1" min="-2" pref="225" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="56" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="subir1Field" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="Subir" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="66" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="responder" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="salir" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -128,6 +149,32 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="salirActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Adjuntar archivos:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="subir1Field">
+      <Events>
+        <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="subir1FieldMousePressed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="Subir">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Subir"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SubirActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Subir otro archivo"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

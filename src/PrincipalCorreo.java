@@ -212,34 +212,12 @@ public class PrincipalCorreo extends javax.swing.JFrame {
         // TODO add your handling code here:
         
          // Doble click en cada correo
-        String enviadopc = null, asuntoc =  null, textoc = null, fecha = null, hora = null;
-        int id =0;
-          
-            try {
-                //Recogemos el valor ID de donde emos echo doble click
-                JTable target = (JTable)evt.getSource();
-                int row = target.getSelectedRow();
-                int valor = (int) TCorreos.getValueAt(row, 0);
-                //Cogemos todos los datos de ese correo
-                String sqlcargar = "Select * from correos where id = '"+valor+"'";
-                ResultSet rs = mysql.consulta(sqlcargar);
-                while(rs.next()){
-                        id = rs.getInt(1);
-                        enviadopc = rs.getString(2);
-                        asuntoc = rs.getString(4);
-                        textoc = rs.getString(5);
-                        fecha = rs.getString(6);
-                        hora = rs.getString(7);
-                       
-                }
-               VerCorreo vercorreo = new VerCorreo();
-               vercorreo.setValores(usuario, enviadopc, asuntoc, textoc, id, fecha, hora);
-               vercorreo.setVisible(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(PrincipalCorreo.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-        //Introducimos los datos de ese correo en una nueva ventana para visualizarlos
+        JTable target = (JTable)evt.getSource();
+        int row = target.getSelectedRow();
+        int valor = (int) TCorreos.getValueAt(row, 0);
+        VerCorreo vercorreo = new VerCorreo();
+        vercorreo.setValores(valor);
+        vercorreo.setVisible(true);
                
     }//GEN-LAST:event_TCorreosMouseClicked
 
